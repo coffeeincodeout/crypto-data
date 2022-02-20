@@ -1,7 +1,6 @@
 # Crypto Watch Data Pull
 
-This project pulls data from the crypto watch api and stores the data in a csv file
-or a sql database. Currently Postresql and MySQL is suppported but a database class
+This project pulls data from the crypto watch api and stores the data in a sql database. Currently Postresql and MySQL is suppported but a database class
 has been created to allow the ability to connect to different databases. 
 
 # Exchanges
