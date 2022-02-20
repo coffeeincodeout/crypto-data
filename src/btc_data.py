@@ -63,8 +63,8 @@ def main():
             # connect to database
             data_base = PostgresDataBase(
                 dbname='bitcoin_data',
-                username='postgres',
-                password='admin1234',
+                username=os.getenv('USER'),
+                password=os.getenv('PASS'),
                 hostname=PostgresqlConn.hostname.value,
                 port=PostgresqlConn.port.value
             )
