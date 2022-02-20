@@ -1,10 +1,11 @@
 from src.api_request.api_request import ApiRequest
 from src.database_class.postgres_db import PostgresDataBase
 from src.database_class.databaseconn import PostgresqlConn
+from datetime import datetime
 from enum import Enum
 import csv
 import os
-import datetime
+import time
 
 
 class BTCPairs(Enum):
@@ -13,8 +14,16 @@ class BTCPairs(Enum):
     gbp = 'btcgbp'
 
 
-def timestamp_format(timestamp: int) -> datetime:
-    return datetime.datetime.fromtimestamp(timestamp).strftime('%m/%d/%Y')
+def timestamp_format(timestamp: int) -> str:
+    return datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d')
+
+
+def convert_date_to_timestamp(date: str) -> str:
+    d = datetime.strptime(date, '%Y-%m-%d')
+    ts = datetime.timestamp(d)
+    if isinstance(ts, float):
+        return str(ts).split('.')[0]
+    return str(ts)
 
 
 def isfloat(num):
@@ -26,11 +35,10 @@ def isfloat(num):
 
 
 def main():
-    path = os.getcwd()
-    period = 86400
-    after = 11580533200
-    before = 1609477200
-
+    period = '86400'
+    after = convert_date_to_timestamp('2021-01-01')
+    before = convert_date_to_timestamp('2022-01-01')
+    # loop through each bitcoin pair in BTCPairs
     for pair in BTCPairs:
         crypto_watch_base_url = 'https://api.cryptowat.ch/'
         end_point = 'markets/kraken/{0}/ohlc?period={1}&after={2}&before={3}'.format(
@@ -47,41 +55,29 @@ def main():
         # hard coded headers to add to csv file
         cols = ["closetime", "openprice", "highprice", "lowprice", "closeprice", "volume", "quotevolume", "asset"]
         # this is the file path to store the csv file
-        file_path = path + '/crypto_files/{}.csv'.format(pair.value)
-        with open(file_path, 'w', newline='') as btc_data:
-            writer = csv.writer(btc_data)
-            # add columns to the csv file
-            writer.writerow(cols)
-            for row in data:
-                # cast timestamp to date
-                row[0] = timestamp_format(row[0])
-                # append the asset type to the row
-                row.append(pair.value)
-                # write the row to csv file
-                writer.writerow(row)
-    # this section will get the csv files and upload them to the database
-    csv_file_path = path + '/crypto_files'
-    for file in os.listdir(csv_file_path):
-        file = csv_file_path + '/' + file
-        with open(file, 'r') as btc_csv_file:
-            reader = csv.reader(btc_csv_file)
-            header = next(reader)
+        for row in data:
+            # cast timestamp to date
+            row[0] = timestamp_format(row[0])
+            # append pair to the asset row
+            row.append(pair.value)
+            # connect to database
+            data_base = PostgresDataBase(
+                dbname='bitcoin_data',
+                username=os.getenv('USER'),
+                password=os.getenv('PASS'),
+                hostname=PostgresqlConn.hostname.value,
+                port=PostgresqlConn.port.value
+            )
+            data_base.conn_db()
+            # add row to database
+            data_base.create(
+                table='bitcoin_price',
+                columns=cols,
+                data=row
+            )
+            # close database connection
+            data_base.close_db_conn()
 
-            for row in reader:
-                data_base = PostgresDataBase(
-                    dbname='bitcoin_data',
-                    username=os.getenv('USER'),
-                    password=os.getenv('PASSWORD'),
-                    hostname=PostgresqlConn.hostname.value,
-                    port=PostgresqlConn.port.value
-                )
-                data_base.conn_db()
-                data_base.create(
-                    table='bitcoin_price',
-                    columns=header,
-                    data=row
-                )
-                data_base.close_db_conn()
     print("Data inserted into table")
 
 

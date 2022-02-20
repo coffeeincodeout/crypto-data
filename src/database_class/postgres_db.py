@@ -101,7 +101,7 @@ class PostgresDataBase(DatabaseCrud):
             values = ', '.join(values for values in kwargs.values())
         else:
             columns = ', '.join('"' + key + '"' for key in columns)
-            values = ', '.join("'" + values + "'" for values in data)
+            values = ', '.join("'" + values + "'" if isinstance(values, str) else str(values) for values in data)
 
         sql = "INSERT INTO %s (%s) VALUES (%s);" % (table, columns, values)
         try:
