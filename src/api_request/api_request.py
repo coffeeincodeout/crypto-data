@@ -17,8 +17,9 @@ class ApiRequest:
 
         url = self._base_url + self._end_point
         self.req = requests.request(self._request_method, url)
-        if self.req.status_code != 200:
-            return self.req.status_code
+        status = self.req.status_code
+        if status != 200:
+            return status
         print(self.req.status_code)
         return self.req
 
