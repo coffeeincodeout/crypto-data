@@ -9,12 +9,6 @@ import os
 import time
 
 
-class BTCPairs(Enum):
-    usd = 'btcusd'
-    eur = 'btceur'
-    gbp = 'btcgbp'
-
-
 def timestamp_format(timestamp: int) -> str:
     return datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d')
 
