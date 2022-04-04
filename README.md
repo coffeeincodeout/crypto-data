@@ -9,6 +9,30 @@ This is the first version that is only pulling data from Kraken but will be work
 to add other exchanges and pairs. Next version will allow the ability to see volume
 from all exchanges.
 
+# Pairs
+
+The project now includes more crypto pairs from Kraken and there are plans to expand further.
+The goal is to eventually build a dashboard that will give high level insight on how the pairs
+are performing. The following pairs have been added:
+
+* Bitcoin
+* Ethereum
+* Litecoin
+* Solana
+* Ada/Cardano
+* Ripple
+* Avalanche
+* Polkadot
+* Dogecoin
+* Terra Luna
+* Graph
+* Polygon Matic
+* Chainlink
+* Shiba Inu
+* Audius
+
+To add more pairs edit the CryptoPairs ENUM class in the crypto/cryptodata.py file. 
+
 # Project Setup
 
 There is a requirements.txt file located in the src directory. Run the below command
