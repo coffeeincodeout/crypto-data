@@ -1,6 +1,7 @@
 from src.api_request.api_request import ApiRequest
 from src.database_class.postgres_db import PostgresDataBase
 from src.database_class.databaseconn import PostgresqlConn
+from src.crypto.cryptodata import CryptoPairs
 from datetime import datetime
 from enum import Enum
 import csv
@@ -36,10 +37,10 @@ def isfloat(num):
 
 def main():
     period = '86400'
-    after = convert_date_to_timestamp('2021-01-01')
-    before = convert_date_to_timestamp('2022-01-01')
+    after = convert_date_to_timestamp('2020-01-01')
+    before = convert_date_to_timestamp('2022-04-04')
     # loop through each bitcoin pair in BTCPairs
-    for pair in BTCPairs:
+    for pair in CryptoPairs:
         crypto_watch_base_url = 'https://api.cryptowat.ch/'
         end_point = 'markets/kraken/{0}/ohlc?period={1}&after={2}&before={3}'.format(
             pair.value, period, after, before)
@@ -63,15 +64,15 @@ def main():
             # connect to database
             data_base = PostgresDataBase(
                 dbname='bitcoin_data',
-                username=os.getenv('USER'),
-                password=os.getenv('PASS'),
+                username='postgres',
+                password='admin1234',
                 hostname=PostgresqlConn.hostname.value,
                 port=PostgresqlConn.port.value
             )
             data_base.conn_db()
             # add row to database
             data_base.create(
-                table='bitcoin_price',
+                table='crypto_test',
                 columns=cols,
                 data=row
             )

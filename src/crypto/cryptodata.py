@@ -1,15 +1,29 @@
 from enum import Enum
 
 
-class BTCPairs(Enum):
+class CryptoPairs(Enum):
     usd = 'btcusd'
-    eur = 'btceur'
-    gbp = 'btcgbp'
+    eth = 'ethusd'
+    ltc = 'ltcusd'
+    sol = 'solusd'
+    ada = 'adausd'
+    avax = 'avaxusd'
+    dot = 'dotusd'
+    luna = 'lunausd'
+    grt = 'grtusd'
+    xrp = 'xrpusd'
+    doge = 'dogeusd'
+    matic = 'maticusd'
+    link = 'linkusd'
+    shib = 'shibusd'
+    audio = 'audiousd'
 
 
 class CryptoExchanges(Enum):
-    krak = 'kraken'
+    kraken = 'kraken'
+    binance_us = 'binance-us'
     binance = 'binance'
-    coin = 'coinbase'
+    coin = 'coinbase-pro'
+    ftx = 'ftx'
 
 
