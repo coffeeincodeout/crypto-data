@@ -3,6 +3,7 @@ from src.database_class.postgres_db import PostgresDataBase
 from src.database_class.databaseconn import PostgresqlConn
 from src.crypto.cryptodata import CryptoPairs
 from datetime import datetime
+from dotenv import load_dotenv
 from enum import Enum
 import csv
 import os
@@ -33,6 +34,7 @@ def main():
     period = '86400'
     after = convert_date_to_timestamp('2020-01-01')
     before = convert_date_to_timestamp('2022-04-04')
+    load_dotenv()
     # loop through each bitcoin pair in BTCPairs
     for pair in CryptoPairs:
         crypto_watch_base_url = 'https://api.cryptowat.ch/'
@@ -58,15 +60,15 @@ def main():
             # connect to database
             data_base = PostgresDataBase(
                 dbname='bitcoin_data',
-                username='postgres',
-                password='admin1234',
+                username=os.getenv('POSTGRESUSER'),
+                password=os.getenv('PASS'),
                 hostname=PostgresqlConn.hostname.value,
                 port=PostgresqlConn.port.value
             )
             data_base.conn_db()
             # add row to database
             data_base.create(
-                table='crypto_test',
+                table='all_kraken_crypto',
                 columns=cols,
                 data=row
             )
